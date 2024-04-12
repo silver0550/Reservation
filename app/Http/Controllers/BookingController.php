@@ -11,13 +11,15 @@ use Inertia\Response;
 
 class BookingController extends Controller
 {
-    public function __construct(private BookingService $bookingService)
+    public function __construct(private readonly BookingService $bookingService)
     {
     }
 
     public function index(): Response
     {
-        return Inertia::render('Reservation/Index');
+        return Inertia::render('Reservation/Index', [
+            'bookedTimes' => $this->bookingService->getBookedTimes(now()->year, now()->month)
+        ]);
     }
 
     public function create()

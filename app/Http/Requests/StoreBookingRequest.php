@@ -14,6 +14,7 @@ class StoreBookingRequest extends FormRequest
         return [
             'date' => ['required', 'date:Y-m-d', 'after_or_equal:today', new Weekday()],
             'time' => ['required', Rule::in(Booking::VALID_TIMES)],
+            //TODO: a dátum és az idő együtt nem szerepelhet az adatbázisban
         ];
     }
 

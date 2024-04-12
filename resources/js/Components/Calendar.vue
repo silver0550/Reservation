@@ -35,7 +35,7 @@ export default {
         };
     },
     computed: {
-        year(){
+        year() {
             return this.currentDate.getFullYear();
         },
         month() {
@@ -45,7 +45,7 @@ export default {
             const daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
 
             const paddingDays = new Date(this.year, this.month, 0).getDay();
-            let days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+            let days = Array.from({length: daysInMonth}, (_, i) => i + 1);
             for (let i = 0; i < paddingDays; i++) {
                 days.unshift(null);
             }
@@ -53,7 +53,7 @@ export default {
             return days;
         },
         monthName() {
-            return new Date(this.year, this.month).toLocaleString('default', { month: 'long' });
+            return new Date(this.year, this.month).toLocaleString('default', {month: 'long'});
         }
     },
     methods: {
@@ -81,7 +81,9 @@ export default {
 
             this.currentDate = newDate;
             this.selected = 0;
-        },
+
+            this.$emit('updateData', null);
+        }
     }
 }
 </script>
