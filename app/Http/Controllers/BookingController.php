@@ -6,6 +6,8 @@ use App\Models\Booking;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use App\Services\BookingService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -55,5 +57,15 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         //
+    }
+
+    public function getBookingTimes(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'year' => ['required', 'int', 'min:2024'],
+            'month' => ['required', 'int', 'min:1', 'max:12'],
+        ]);
+
+        return response()->json($this->bookingService->getBookedTimes($validated['year'], $validated['month']), 200);
     }
 }
