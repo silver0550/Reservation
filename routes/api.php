@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/booking/times', [\App\Http\Controllers\BookingController::class, 'getBookingTimes']);
+Route::get('/booking/times', [BookingController::class, 'getBookingTimes']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

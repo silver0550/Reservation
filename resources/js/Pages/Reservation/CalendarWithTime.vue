@@ -7,14 +7,12 @@
         </div>
         <div class="w-1/4 ml-5">
             <time-chooser
-                :is-active="!!selectedDay"
+                :is-active="isActive"
                 :booked-times="filteredTimes"
                 @updateTime="updateTime"
             ></time-chooser>
         </div>
     </div>
-    {{ selectedDay }}
-    {{ bookedTimes }}
 </template>
 
 <script>
@@ -23,9 +21,12 @@ import TimeChooser from "@/Components/TimeChooser.vue";
 import axios from "axios";
 
 export default {
-    name: "index",
+    emits:['changeDate'],
+    name: "calendar-with-time",
     components: {TimeChooser, Calendar},
-
+    props: {
+        isActive: {type: Boolean, default: true},
+    },
     data() {
         return {
             bookedTimes: [],
@@ -53,9 +54,21 @@ export default {
             }
 
             this.selectedDay = date;
+
+            if (this.selectedTime){
+                let time = this.selectedTime.split(':');
+                this.selectedDay.setHours(parseInt(time[0]),parseInt(time[1]),0);
+            }
+
+            this.$emit('changeDate', new Date(this.selectedDay));
+
         },
         updateTime(time) {
             this.selectedTime = time;
+            time = time.split(':');
+
+            this.selectedDay.setHours(parseInt(time[0]),parseInt(time[1]),0);
+            this.$emit('changeDate', new Date(this.selectedDay));
         },
         updateBookedTimes(year, month) {
             axios.get('/api/booking/times', {
@@ -68,13 +81,14 @@ export default {
                     this.bookedTimes = response.data;
                 })
                 .catch(error => {
-                    console.error('Error updating booked times:', error);
+                    console.error('Error updating booked:', error);
                 });
         }
     },
     created() {
         const now = new Date();
         this.updateBookedTimes(now.getFullYear(), now.getMonth() + 1);
+        this.selectedDay = now;
     },
 }
 </script>

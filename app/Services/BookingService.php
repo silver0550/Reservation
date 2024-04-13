@@ -15,17 +15,44 @@ class BookingService
 
     public function getBookedTimes(int $year, int $month): array
     {
-        $bookings = $this->bookingRepository->getBookedTimes($year, $month);
+        $bookedTimes = $this->bookingRepository->getBookedTimes($year, $month);
 
         $formatted = [];
 
-        foreach ($bookings as $booking) {
+        foreach ($bookedTimes as $dateOfBooking) {
             $formatted [] = [
-                'day' => (int) $booking->format('d'),
-                'time' => $booking->format('H:i'),
+                'day' => (int) $dateOfBooking->format('d'),
+                'time' => $dateOfBooking->format('H:i'),
             ];
         }
 
         return $formatted;
+    }
+
+    public function getMyAppointments(): array
+    {
+        $myAppointments = $this->bookingRepository->getMyAppointments();
+
+        $formattedData = [];
+
+        $myAppointments->each(function ($appointment) use (&$formattedData) {
+            $formattedData [] = [
+                'id' => $appointment->id,
+                'date' => $appointment->startOfReservation->format('Y-m-d'),
+                'time' => $appointment->startOfReservation->format('H:i')
+            ];
+        });
+
+        return $formattedData;
+    }
+
+    public function store(array $data): void
+    {
+        $this->bookingRepository->create($data);
+    }
+
+    public function destroy(int $bookingId): void
+    {
+        $this->bookingRepository->delete($bookingId);
     }
 }

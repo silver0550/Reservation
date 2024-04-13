@@ -19,8 +19,15 @@ use Inertia\Inertia;
 
 
 Route::get('/booking', [BookingController::class, 'index']);
+Route::get('/booking/reservation', [BookingController::class, 'create'])->middleware('auth');
+Route::post('/booking', [BookingController::class, 'store'])->middleware('auth');
+Route::get('/booking/myAppointments', [BookingController::class, 'getMyAppointments'])->middleware('auth');
+Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->middleware('auth');
 
 
+Route::get('/test', function () {
+    dd('test');
+});
 
 
 Route::get('/', function () {

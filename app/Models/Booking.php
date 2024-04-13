@@ -16,15 +16,15 @@ class Booking extends Model
     use SoftDeletes;
 
     const VALID_TIMES = [
-        '08:00:00',
-        '10:00:00',
-        '12:00:00',
-        '14:00:00',
-        '16:00:00',
-        '18:00:00',
+        '08:00',
+        '10:00',
+        '12:00',
+        '14:00',
+        '16:00',
+        '18:00',
     ];
 
-    protected $hidden = ['id'];
+    protected $guarded = ['id'];
     protected $casts = [
         'status' => StatusEnum::class,
     ];

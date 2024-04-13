@@ -10,6 +10,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseCode;
+
 
 class BookingController extends Controller
 {
@@ -19,20 +21,22 @@ class BookingController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('Reservation/Index', [
-            'bookedTimes' => $this->bookingService->getBookedTimes(now()->year, now()->month)
-        ]);
+        return Inertia::render('Reservation/Index');
     }
 
-    public function create()
+    public function create(): Response
     {
-        //
+        return Inertia::render('Reservation/Create');
     }
 
 
-    public function store(StoreBookingRequest $request)
+    public function store(StoreBookingRequest $request): JsonResponse
     {
-        //
+        $validated = $request->validated();
+
+        $this->bookingService->store($validated);
+
+        return response()->json(null, ResponseCode::HTTP_CREATED);
     }
 
 
@@ -54,9 +58,15 @@ class BookingController extends Controller
     }
 
 
-    public function destroy(Booking $booking)
+    public function destroy(Booking $booking): JsonResponse
     {
-        //
+        if ($booking->user_id == userId()) {
+            $this->bookingService->destroy($booking->id);
+
+            return response()->json(status: ResponseCode::HTTP_ACCEPTED);
+        }
+
+        return response()->json(status: ResponseCode::HTTP_NOT_FOUND);
     }
 
     public function getBookingTimes(Request $request): JsonResponse
@@ -67,5 +77,10 @@ class BookingController extends Controller
         ]);
 
         return response()->json($this->bookingService->getBookedTimes($validated['year'], $validated['month']), 200);
+    }
+
+    public function getMyAppointments(): JsonResponse
+    {
+        return response()->json($this->bookingService->getMyAppointments(), 200);
     }
 }
