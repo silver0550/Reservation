@@ -23,7 +23,7 @@ Route::get('/booking/reservation', [BookingController::class, 'create'])->middle
 Route::post('/booking', [BookingController::class, 'store'])->middleware('auth');
 Route::get('/booking/myAppointments', [BookingController::class, 'getMyAppointments'])->middleware('auth');
 Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->middleware('auth');
-
+Route::put('booking/{booking}', [BookingController::class, 'update'])->middleware('auth');
 
 Route::get('/test', function () {
     dd('test');

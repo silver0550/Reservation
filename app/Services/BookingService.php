@@ -55,4 +55,9 @@ class BookingService
     {
         $this->bookingRepository->delete($bookingId);
     }
+
+    public function update(int $id, array $data): void
+    {
+        $this->bookingRepository->update($id, $data);
+    }
 }

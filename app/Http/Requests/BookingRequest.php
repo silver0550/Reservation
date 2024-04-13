@@ -7,14 +7,23 @@ use App\Rules\Weekday;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreBookingRequest extends FormRequest
+class BookingRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return !is_null(user());
+    }
+
     public function rules(): array
     {
         return [
             'date' => ['required', 'date:Y-m-d', 'after_or_equal:today', new Weekday()],
-            'time' => ['required', Rule::in(Booking::VALID_TIMES)],
-            //TODO: a dátum és az idő együtt nem szerepelhet az adatbázisban
+            'time' => [
+                'required',
+                Rule::in(Booking::VALID_TIMES),
+                Rule::unique('bookings')
+                    ->where(fn($query) => $query->where('date', $this->date)->where('time', $this->time))
+            ],
         ];
     }
 

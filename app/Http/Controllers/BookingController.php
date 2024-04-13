@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Http\Requests\StoreBookingRequest;
-use App\Http\Requests\UpdateBookingRequest;
+use App\Http\Requests\BookingRequest;
 use App\Services\BookingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,7 +29,7 @@ class BookingController extends Controller
     }
 
 
-    public function store(StoreBookingRequest $request): JsonResponse
+    public function store(BookingRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
@@ -52,9 +51,16 @@ class BookingController extends Controller
     }
 
 
-    public function update(UpdateBookingRequest $request, Booking $booking)
+    public function update(BookingRequest $request, Booking $booking): JsonResponse
     {
-        //
+        if ($booking->user_id == userId()) {
+            $validated = $request->validated();
+            $this->bookingService->update($booking->id, $validated);
+
+            return response()->json(status: ResponseCode::HTTP_CREATED);
+        }
+
+        return response()->json(status: ResponseCode::HTTP_NOT_FOUND);
     }
 
 
@@ -76,11 +82,14 @@ class BookingController extends Controller
             'month' => ['required', 'int', 'min:1', 'max:12'],
         ]);
 
-        return response()->json($this->bookingService->getBookedTimes($validated['year'], $validated['month']), 200);
+        return response()->json(
+            $this->bookingService->getBookedTimes($validated['year'], $validated['month']),
+            ResponseCode::HTTP_OK
+        );
     }
 
     public function getMyAppointments(): JsonResponse
     {
-        return response()->json($this->bookingService->getMyAppointments(), 200);
+        return response()->json($this->bookingService->getMyAppointments(), ResponseCode::HTTP_OK);
     }
 }

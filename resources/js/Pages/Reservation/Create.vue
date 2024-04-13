@@ -1,50 +1,43 @@
 <template>
     <calendar-with-time
-        @changeDate="updateDate"
-    ></calendar-with-time>
-
+        @changeDate="updateDate">
+    </calendar-with-time>
     <button class="btn btn-primary" @click="store">Mentés</button>
-    {{ selectedDate }}
-    {{ errors }}
     <div>
         foglalásaim
         <div class="overflow-x-auto">
-            <table class="table table-zebra">
+            <table class="table table-zebra w-1/2 mx-auto">
                 <thead>
                 <tr>
-                    <th></th>
-                    <th>Dátum</th>
-                    <th>Idő</th>
-                    <th></th>
+                    <th class="w-1/12"></th>
+                    <th class="w-4/12">Dátum</th>
+                    <th class="w-4/12">Idő</th>
+                    <th class="w-2/12"></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="(booking, index) in ownBookings" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ booking['date'] }}</td>
-                    <td>{{ booking['time'] }}</td>
-                    <td v-if="!isBookingInThePast(booking)">
-                        <a href="" class="btn btn-sm btn-ghost"><i class="las la-edit"/></a>
-                        <a @click="destroy(booking['id'])" class="btn btn-sm btn-ghost">
-                            <i class="las la-trash"/>
-                        </a>
-                    </td>
+                    <BookingRow
+                        @deletedBooking="deleteBooking"
+                        @updatedBooking="updateBooking"
+                        :booking="booking"
+                        :index="index"
+                    ></BookingRow>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    {{ ownBookings }}
-
 </template>
 
 <script>
 import CalendarWithTime from "@/Pages/Reservation/CalendarWithTime.vue";
 import axios from "axios";
+import BookingRow from "@/Components/Booking/BookingRow.vue";
 
 export default {
     name: "Create",
-    components: {CalendarWithTime},
+    components: {BookingRow, CalendarWithTime},
 
     data() {
         return {
@@ -74,17 +67,6 @@ export default {
                 this.errors = 'A dátum kötelezeő';
             }
         },
-        destroy(id) {
-            axios.delete(`/booking/${id}`)
-                .then((response) => {
-                    this.ownBookings = this.ownBookings.filter(booking => booking.id !== id);
-                    //TODO: sikeres törlés visszajelzés
-                })
-                .catch((error) => {
-                    this.errors = error //TODO: error handling
-                    console.error(error.message);
-                });
-        },
         getMyBookings() {
             axios.get('/booking/myAppointments')
                 .then(response => {
@@ -94,11 +76,17 @@ export default {
                     console.error('Error updating booked:', error);
                 });
         },
-        isBookingInThePast(booking) {
-            const bookingDateTime = new Date(booking['date'] + 'T' + booking['time']);
-            const currentDateTime = new Date();
+        deleteBooking(id) {
+            this.ownBookings = this.ownBookings.filter(booking => booking.id !== id);
+        },
+        updateBooking(booking) {
+            for (let i = 0; i < this.ownBookings.length; i++) {
+                if (this.ownBookings[i]['id'] === booking['id']) {
+                    this.ownBookings[i] = booking;
 
-            return bookingDateTime < currentDateTime;
+                    return;
+                }
+            }
         },
     },
     created() {
