@@ -27,7 +27,7 @@ class BookingRequest extends FormRequest
         ];
     }
 
-    public function Attribute(): array
+    public function attributes(): array
     {
         return [
             'date' => __('booking.date'),

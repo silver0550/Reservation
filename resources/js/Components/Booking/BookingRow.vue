@@ -50,11 +50,13 @@ export default {
             axios.delete(`/booking/${this.booking['id']}`)
                 .then((response) => {
                     this.$emit('deletedBooking', this.booking['id'])
-                    //TODO: sikeres törlés visszajelzés
+                    this.errors = null;
+                    alert('Sikeres törlés');
                 })
                 .catch((error) => {
-                    this.errors = error //TODO: error handling
-                    console.error(error.message);
+                    if (error.response && error.response.data && error.response.data.message) {
+                        alert(error.response.data.message);
+                    }
                 });
         },
         update() {
@@ -62,11 +64,13 @@ export default {
                 .then((response) => {
                     this.$emit('updatedBooking', this.bookingCopy);
                     this.isEditorVisible = false;
-                    //TODO: sikeres frissítés visszajelzés
+                    this.errors = null;
+                    alert('Sikeres frissítés');
                 })
                 .catch((error) => {
-                    this.errors = error;
-                    console.error(error.message);
+                    if (error.response && error.response.data && error.response.data.message) {
+                        alert(error.response.data.message);
+                    }
                 });
         },
         isBookingInThePast(booking) {

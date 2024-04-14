@@ -3,8 +3,10 @@
         @changeDate="updateDate">
     </calendar-with-time>
     <button class="btn btn-primary" @click="store">Mentés</button>
+    <div class="text-sm text-red-700 p-2"> {{ errors }}</div>
     <div>
-        foglalásaim
+        <div class="text-center p-3 font-bold text-2xl">Foglalásaim</div>
+
         <div class="overflow-x-auto">
             <table class="table table-zebra w-1/2 mx-auto">
                 <thead>
@@ -57,11 +59,13 @@ export default {
 
                 axios.post('/booking', {date: date, time: time})
                     .then((response) => {
-                        //TODO: sikeres foglalás visszajelzés
+                        this.errors = null;
+                        alert('Sikeres foglalás');
                     })
                     .catch((error) => {
-                        this.errors = error
-                        console.error(error.message);
+                        if (error.response && error.response.data && error.response.data.message) {
+                            this.errors = error.response.data.message;
+                        }
                     });
             } else {
                 this.errors = 'A dátum kötelezeő';

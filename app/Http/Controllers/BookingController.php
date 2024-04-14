@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
 use App\Http\Requests\BookingRequest;
+use App\Http\Resources\AppointmentResource;
+use App\Http\Resources\BookingResource;
+use App\Models\Booking;
 use App\Services\BookingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,6 +26,11 @@ class BookingController extends Controller
     }
 
     public function create(): Response
+    {
+        return Inertia::render('Reservation/Create');
+    }
+
+    public function reservation(): Response
     {
         return Inertia::render('Reservation/Create');
     }
@@ -82,14 +89,16 @@ class BookingController extends Controller
             'month' => ['required', 'int', 'min:1', 'max:12'],
         ]);
 
-        return response()->json(
-            $this->bookingService->getBookedTimes($validated['year'], $validated['month']),
-            ResponseCode::HTTP_OK
-        );
+
+        $bookings = $this->bookingService->getBookedTimes($validated['year'], $validated['month']);
+
+        return response()->json(BookingResource::collection($bookings)->resolve(), ResponseCode::HTTP_OK);
     }
 
     public function getMyAppointments(): JsonResponse
     {
-        return response()->json($this->bookingService->getMyAppointments(), ResponseCode::HTTP_OK);
+        $appointments = $this->bookingService->getMyAppointments();
+
+        return response()->json(AppointmentResource::collection($appointments), ResponseCode::HTTP_OK);
     }
 }

@@ -17,13 +17,22 @@ use Inertia\Inertia;
 |
 */
 
-
 Route::get('/booking', [BookingController::class, 'index']);
-Route::get('/booking/reservation', [BookingController::class, 'create'])->middleware('auth');
-Route::post('/booking', [BookingController::class, 'store'])->middleware('auth');
-Route::get('/booking/myAppointments', [BookingController::class, 'getMyAppointments'])->middleware('auth');
-Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->middleware('auth');
-Route::put('booking/{booking}', [BookingController::class, 'update'])->middleware('auth');
+
+Route::group([
+    'prefix' => 'booking',
+    'middleware' => ['auth'],
+    'as' => 'booking.',
+    'controller' => BookingController::class
+], function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('/', 'store')->name('store');
+    Route::get('/create/{booking}, create')->name('create');
+    Route::get('/reservation', 'reservation')->name('reservation');
+    Route::get('/myAppointments', 'getMyAppointments')->name('myAppointments');
+    Route::delete('/{booking}', 'destroy')->name('destroy');
+    Route::put('/{booking}', 'update')->name('update');
+});
 
 Route::get('/test', function () {
     dd('test');
