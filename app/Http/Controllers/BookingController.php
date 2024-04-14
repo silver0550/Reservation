@@ -9,6 +9,7 @@ use App\Models\Booking;
 use App\Services\BookingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseCode;
@@ -25,14 +26,26 @@ class BookingController extends Controller
         return Inertia::render('Reservation/Index');
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('Reservation/Create');
+        $validated = $request->validate([
+            'id' => [
+                'required',
+                Rule::exists('bookings', 'id')
+                    ->where(function ($query) {
+                        $query->where('user_id', userId());
+                    })
+            ],
+        ]);
+
+        return Inertia::render('Reservation/Create', [
+            'id' => $validated['id'],
+        ]);
     }
 
     public function reservation(): Response
     {
-        return Inertia::render('Reservation/Create');
+        return Inertia::render('Reservation/Reservation');
     }
 
 
@@ -40,9 +53,9 @@ class BookingController extends Controller
     {
         $validated = $request->validated();
 
-        $this->bookingService->store($validated);
+        $newBooking = $this->bookingService->store($validated);
 
-        return response()->json(null, ResponseCode::HTTP_CREATED);
+        return response()->json($newBooking->id, ResponseCode::HTTP_CREATED);
     }
 
 

@@ -23,9 +23,9 @@ class BookingService
         return $this->bookingRepository->getMyAppointments();
     }
 
-    public function store(array $data): void
+    public function store(array $data): Booking
     {
-        $this->bookingRepository->create($data);
+        return $this->bookingRepository->create($data);
     }
 
     public function destroy(int $bookingId): void

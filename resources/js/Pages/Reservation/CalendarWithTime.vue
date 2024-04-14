@@ -16,12 +16,12 @@
 </template>
 
 <script>
-import Calendar from "@/Components/Calendar.vue";
-import TimeChooser from "@/Components/TimeChooser.vue";
+import Calendar from "@/Components/Booking/Calendar.vue";
+import TimeChooser from "@/Components/Booking/TimeChooser.vue";
 import axios from "axios";
 
 export default {
-    emits:['changeDate'],
+    emits: ['changeDate'],
     name: "calendar-with-time",
     components: {TimeChooser, Calendar},
     props: {
@@ -55,9 +55,9 @@ export default {
 
             this.selectedDay = date;
 
-            if (this.selectedTime){
+            if (this.selectedTime) {
                 let time = this.selectedTime.split(':');
-                this.selectedDay.setHours(parseInt(time[0]),parseInt(time[1]),0);
+                this.selectedDay.setHours(parseInt(time[0]), parseInt(time[1]), 0);
             }
 
             this.$emit('changeDate', new Date(this.selectedDay));
@@ -67,7 +67,7 @@ export default {
             this.selectedTime = time;
             time = time.split(':');
 
-            this.selectedDay.setHours(parseInt(time[0]),parseInt(time[1]),0);
+            this.selectedDay.setHours(parseInt(time[0]), parseInt(time[1]), 0);
             this.$emit('changeDate', new Date(this.selectedDay));
         },
         updateBookedTimes(year, month) {
