@@ -30,7 +30,7 @@ export default {
             axios.get(`/booking/status/?id=${this.booking['id']}&status=${this.status}`)
                 .then((response) => {
                     window.location.href = `${window.location.origin}/booking/reservation`;
-                    this.status == 'resolved'
+                    this.status === 'resolved'
                         ? alert('A foglalás véglegesítve!')
                         : alert('A foglalás Megszakítva!');
                 })
