@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusEnum;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Http\Resources\BookingResource;
@@ -39,7 +40,7 @@ class BookingController extends Controller
         ]);
 
         return Inertia::render('Reservation/Create', [
-            'id' => $validated['id'],
+            'booking' => new AppointmentResource($this->bookingService->getById($validated['id'])),
         ]);
     }
 
@@ -113,5 +114,23 @@ class BookingController extends Controller
         $appointments = $this->bookingService->getMyAppointments();
 
         return response()->json(AppointmentResource::collection($appointments), ResponseCode::HTTP_OK);
+    }
+
+    public function status(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => [
+                'required',
+                Rule::exists('bookings', 'id')
+                    ->where(function ($query) {
+                        $query->where('user_id', userId());
+                    })
+            ],
+            'status' => ['required', Rule::in(StatusEnum::getValues())],
+        ]);
+
+        $this->bookingService->setStatus($validated['id'], StatusEnum::from($validated['status']));
+
+        return response()->json(null, ResponseCode::HTTP_OK);
     }
 }

@@ -38,4 +38,11 @@ class BookingRepository extends BaseRepository
             ->get();
 
     }
+
+    public function setStatus(int $id, StatusEnum $status): void
+    {
+        $this->getById($id)->update([
+            'status' => $status
+        ]);
+    }
 }

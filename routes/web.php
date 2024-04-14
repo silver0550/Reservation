@@ -27,7 +27,7 @@ Route::group([
 ], function () {
     Route::post('/', 'store')->name('store');
     Route::get('/create', 'create')->name('create');
-    //TODO: status route kell
+    Route::get('/status', 'status')->name('status');
     Route::get('/reservation', 'reservation')->name('reservation');
     Route::get('/myAppointments', 'getMyAppointments')->name('myAppointments');
     Route::delete('/{booking}', 'destroy')->name('destroy');
