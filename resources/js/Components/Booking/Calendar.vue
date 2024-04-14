@@ -81,8 +81,6 @@ export default {
 
             this.currentDate = newDate;
             this.selected = 0;
-
-            this.$emit('updateData', null);
         }
     }
 }

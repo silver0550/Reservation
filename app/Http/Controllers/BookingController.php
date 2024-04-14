@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingRequest;
+use App\Http\Resources\AppointmentResource;
+use App\Http\Resources\BookingResource;
 use App\Models\Booking;
-use App\Http\Requests\StoreBookingRequest;
-use App\Http\Requests\UpdateBookingRequest;
 use App\Services\BookingService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseCode;
+
 
 class BookingController extends Controller
 {
@@ -17,20 +23,39 @@ class BookingController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('Reservation/Index', [
-            'bookedTimes' => $this->bookingService->getBookedTimes(now()->year, now()->month)
+        return Inertia::render('Reservation/Index');
+    }
+
+    public function create(Request $request): Response
+    {
+        $validated = $request->validate([
+            'id' => [
+                'required',
+                Rule::exists('bookings', 'id')
+                    ->where(function ($query) {
+                        $query->where('user_id', userId());
+                    })
+            ],
+        ]);
+
+        return Inertia::render('Reservation/Create', [
+            'id' => $validated['id'],
         ]);
     }
 
-    public function create()
+    public function reservation(): Response
     {
-        //
+        return Inertia::render('Reservation/Reservation');
     }
 
 
-    public function store(StoreBookingRequest $request)
+    public function store(BookingRequest $request): JsonResponse
     {
-        //
+        $validated = $request->validated();
+
+        $newBooking = $this->bookingService->store($validated);
+
+        return response()->json($newBooking->id, ResponseCode::HTTP_CREATED);
     }
 
 
@@ -46,14 +71,47 @@ class BookingController extends Controller
     }
 
 
-    public function update(UpdateBookingRequest $request, Booking $booking)
+    public function update(BookingRequest $request, Booking $booking): JsonResponse
     {
-        //
+        if ($booking->user_id == userId()) {
+            $validated = $request->validated();
+            $this->bookingService->update($booking->id, $validated);
+
+            return response()->json(status: ResponseCode::HTTP_CREATED);
+        }
+
+        return response()->json(status: ResponseCode::HTTP_NOT_FOUND);
     }
 
 
-    public function destroy(Booking $booking)
+    public function destroy(Booking $booking): JsonResponse
     {
-        //
+        if ($booking->user_id == userId()) {
+            $this->bookingService->destroy($booking->id);
+
+            return response()->json(status: ResponseCode::HTTP_ACCEPTED);
+        }
+
+        return response()->json(status: ResponseCode::HTTP_NOT_FOUND);
+    }
+
+    public function getBookingTimes(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'year' => ['required', 'int', 'min:2024'],
+            'month' => ['required', 'int', 'min:1', 'max:12'],
+        ]);
+
+
+        $bookings = $this->bookingService->getBookedTimes($validated['year'], $validated['month']);
+
+        return response()->json(BookingResource::collection($bookings)->resolve(), ResponseCode::HTTP_OK);
+    }
+
+    public function getMyAppointments(): JsonResponse
+    {
+        $appointments = $this->bookingService->getMyAppointments();
+
+        return response()->json(AppointmentResource::collection($appointments), ResponseCode::HTTP_OK);
     }
 }

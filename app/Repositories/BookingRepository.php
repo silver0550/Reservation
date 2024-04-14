@@ -15,18 +15,27 @@ class BookingRepository extends BaseRepository
         return Booking::class;
     }
 
-    public function getBookedTimes(int $year, int $month, int $userId = null): array
+    public function getBookedTimes(int $year, int $month, int $userId = null): Collection
     {
-        $bookings = $this->model::query()
+        return $this->model::query()
             ->when($userId, fn($query) => $query->where('user_id', $userId))
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
+            ->where(function ($query) {
+                $query->where('status', StatusEnum::RESOLVED)
+                    ->orWhere('status', StatusEnum::PENDING);
+            })->get();
+
+    }
+
+    public function getMyAppointments(): Collection
+    {
+        return $this->model::query()
+            ->where('user_id', userId())
             ->where('status', StatusEnum::RESOLVED)
+            ->orderBy('date')
+            ->orderBy('time')
             ->get();
 
-        return $bookings->map(function ($booking) {
-
-            return $booking->startOfReservation;
-        })->toArray();
     }
 }

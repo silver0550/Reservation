@@ -17,19 +17,31 @@ use Inertia\Inertia;
 |
 */
 
+Route::get('/booking', [BookingController::class, 'index'])->name('index');
 
-Route::get('/booking', [BookingController::class, 'index']);
+Route::group([
+    'prefix' => 'booking',
+    'middleware' => ['auth'],
+    'as' => 'booking.',
+    'controller' => BookingController::class
+], function () {
+    Route::post('/', 'store')->name('store');
+    Route::get('/create', 'create')->name('create');
+    //TODO: status route kell
+    Route::get('/reservation', 'reservation')->name('reservation');
+    Route::get('/myAppointments', 'getMyAppointments')->name('myAppointments');
+    Route::delete('/{booking}', 'destroy')->name('destroy');
+    Route::put('/{booking}', 'update')->name('update');
+});
 
-
+Route::get('/test', function () {
+    dd('test');
+});
 
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+
+    return redirect()->route('index');
 });
 
 Route::get('/dashboard', function () {

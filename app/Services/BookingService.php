@@ -13,19 +13,28 @@ class BookingService
     {
     }
 
-    public function getBookedTimes(int $year, int $month): array
+    public function getBookedTimes(int $year, int $month): Collection
     {
-        $bookings = $this->bookingRepository->getBookedTimes($year, $month);
+        return $this->bookingRepository->getBookedTimes($year, $month);
+    }
 
-        $formatted = [];
+    public function getMyAppointments(): Collection
+    {
+        return $this->bookingRepository->getMyAppointments();
+    }
 
-        foreach ($bookings as $booking) {
-            $formatted [] = [
-                'day' => (int) $booking->format('d'),
-                'time' => $booking->format('H:i'),
-            ];
-        }
+    public function store(array $data): Booking
+    {
+        return $this->bookingRepository->create($data);
+    }
 
-        return $formatted;
+    public function destroy(int $bookingId): void
+    {
+        $this->bookingRepository->delete($bookingId);
+    }
+
+    public function update(int $id, array $data): void
+    {
+        $this->bookingRepository->update($id, $data);
     }
 }
