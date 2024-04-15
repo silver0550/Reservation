@@ -20,10 +20,10 @@ class BookingUpdateEvent implements ShouldBroadcast
     private readonly int $month;
     public BookingResource $data;
 
-    public function __construct(private readonly Booking $booking, public EventEnum $eventType)
+    public function __construct(Booking $booking, public EventEnum $eventType)
     {
         $this->month = (int) $booking->startOfReservation->format('m');
-        $this->data = new BookingResource($this->booking);
+        $this->data = new BookingResource($booking);
     }
 
     public function broadcastOn(): Channel
