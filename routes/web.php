@@ -1,9 +1,7 @@
 <?php
 
-use App\Events\TestEvent;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -39,13 +37,7 @@ Route::get('/test', function () {
     dd('test');
 });
 
-Route::get('/fire-event', function () {
-    event(new TestEvent('TESZT ÜZENET'));
-    return "Event has been fired!";
-});
-
 Route::get('/', function () {
-
     return redirect()->route('index');
 });
 
