@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\TestEvent;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -38,6 +39,10 @@ Route::get('/test', function () {
     dd('test');
 });
 
+Route::get('/fire-event', function () {
+    event(new TestEvent('TESZT ÜZENET'));
+    return "Event has been fired!";
+});
 
 Route::get('/', function () {
 
