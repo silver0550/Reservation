@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
 use App\Models\Booking;
 use App\Repositories\BookingRepository;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,5 +37,15 @@ class BookingService
     public function update(int $id, array $data): void
     {
         $this->bookingRepository->update($id, $data);
+    }
+
+    public function getById(int $id): Booking
+    {
+        return $this->bookingRepository->getById($id);
+    }
+
+    public function setStatus(int $id, StatusEnum $status): void
+    {
+        $this->bookingRepository->setStatus($id, $status);
     }
 }

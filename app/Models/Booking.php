@@ -25,6 +25,9 @@ class Booking extends Model
     ];
 
     protected $guarded = ['id'];
+    protected $attributes = [
+        'status' => StatusEnum::PENDING,
+    ];
     protected $casts = [
         'status' => StatusEnum::class,
     ];
@@ -49,14 +52,14 @@ class Booking extends Model
     public function startOfReservation(): Attribute
     {
         return Attribute::make(
-            get: fn() => Carbon::parse($this->date . $this->time)
+            get: fn() => Carbon::parse($this->date.$this->time)
         );
     }
 
     public function endOfReservation(): Attribute
     {
         return Attribute::make(
-            get: fn() => Carbon::parse($this->date . $this->time)->addHour(2)
+            get: fn() => Carbon::parse($this->date.$this->time)->addHour(2)
         );
     }
 

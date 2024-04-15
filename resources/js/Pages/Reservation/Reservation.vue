@@ -39,7 +39,6 @@
 import CalendarWithTime from "@/Pages/Reservation/CalendarWithTime.vue";
 import axios from "axios";
 import BookingRow from "@/Components/Booking/BookingRow.vue";
-import {router} from "@inertiajs/vue3";
 
 export default {
     name: "Create",

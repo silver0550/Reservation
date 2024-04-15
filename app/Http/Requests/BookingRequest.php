@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StatusEnum;
 use App\Models\Booking;
 use App\Rules\Weekday;
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,7 +23,15 @@ class BookingRequest extends FormRequest
                 'required',
                 Rule::in(Booking::VALID_TIMES),
                 Rule::unique('bookings')
-                    ->where(fn($query) => $query->where('date', $this->date)->where('time', $this->time))
+                    ->where(function ($query) {
+                        return $query->where('date', $this->date)
+                            ->where('time', $this->time)
+                            ->whereNull('deleted_at')
+                            ->where(function ($query) {
+                                $query->where('status', StatusEnum::RESOLVED)
+                                    ->orWhere('status', StatusEnum::PENDING);
+                            });
+                    })
             ],
         ];
     }

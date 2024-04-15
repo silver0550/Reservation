@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,7 +26,7 @@ Route::group([
 ], function () {
     Route::post('/', 'store')->name('store');
     Route::get('/create', 'create')->name('create');
-    //TODO: status route kell
+    Route::get('/status', 'status')->name('status');
     Route::get('/reservation', 'reservation')->name('reservation');
     Route::get('/myAppointments', 'getMyAppointments')->name('myAppointments');
     Route::delete('/{booking}', 'destroy')->name('destroy');
@@ -38,9 +37,7 @@ Route::get('/test', function () {
     dd('test');
 });
 
-
 Route::get('/', function () {
-
     return redirect()->route('index');
 });
 

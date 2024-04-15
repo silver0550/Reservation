@@ -7,12 +7,12 @@ enum StatusEnum: string
     case PENDING = 'pending';
     case CANCELED = 'canceled';
     case RESOLVED = 'resolved';
-    case ABANDONED  = 'abandoned';
+    case ABANDONED = 'abandoned';
 
 
     public function getReadableText(): string
     {
-        return match ($this){
+        return match ($this) {
             self::PENDING => __('status.pending'),
             self::CANCELED => __('status.canceled'),
             self::RESOLVED => __('status.resolved'),
@@ -20,7 +20,7 @@ enum StatusEnum: string
         };
     }
 
-    public function getValues(): array
+    public static function getValues(): array
     {
         return getEnumValues(self::class);
     }

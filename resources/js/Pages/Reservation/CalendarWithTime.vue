@@ -83,12 +83,29 @@ export default {
                 .catch(error => {
                     console.error('Error updating booked:', error);
                 });
+        },
+        handleBookingUpdateEvent(event) {
+            if (event.eventType === 'created') {
+                this.bookedTimes.push(event.data);
+            } else if (event.eventType === 'updated') {
+                const index = this.bookedTimes.findIndex(item => item.id === event.data.id);
+                if (index !== -1) {
+                    this.bookedTimes[index] = event.data;
+                }
+            } else if (event.eventType === 'deleted') {
+                const index = this.bookedTimes.findIndex(item => item.id === event.data.id);
+                if (index !== -1) {
+                    this.bookedTimes.splice(index, 1);
+                }
+            }
         }
     },
-    created() {
-        const now = new Date();
-        this.updateBookedTimes(now.getFullYear(), now.getMonth() + 1);
-        this.selectedDay = now;
+    mounted() {
+        this.selectedDay = new Date();
+        this.updateBookedTimes(this.selectedDay.getFullYear(), this.selectedDay.getMonth() + 1);
+
+        window.Echo.channel(`booking-update-${this.selectedDay.getMonth() + 1}`)
+            .listen('BookingUpdateEvent', this.handleBookingUpdateEvent)
     },
 }
 </script>
