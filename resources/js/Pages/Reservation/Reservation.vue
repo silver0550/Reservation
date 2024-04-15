@@ -1,48 +1,51 @@
 <template>
-    <calendar-with-time
-        @changeDate="updateDate">
-    </calendar-with-time>
-    <div class="flex flex-col">
-        <button class="btn btn-primary w-1/12 mx-auto" @click="store">Mentés</button>
-        <div class="text-sm text-center text-red-700 p-2"> {{ errors }}</div>
-    </div>
-
-    <div>
-        <div class="text-center p-3 font-bold text-2xl">Foglalásaim</div>
-
-        <div class="overflow-x-auto">
-            <table class="table table-zebra w-1/2 mx-auto">
-                <thead>
-                <tr>
-                    <th class="w-1/12"></th>
-                    <th class="w-4/12">Dátum</th>
-                    <th class="w-4/12">Idő</th>
-                    <th class="w-2/12"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(booking, index) in ownBookings" :key="index">
-                    <BookingRow
-                        @deletedBooking="deleteBooking"
-                        @updatedBooking="updateBooking"
-                        :booking="booking"
-                        :index="index"
-                    ></BookingRow>
-                </tr>
-                </tbody>
-            </table>
+    <AuthenticatedLayout>
+        <label class="flex justify-center text-2xl font-bold mt-5">Naptár</label>
+        <calendar-with-time
+            @changeDate="updateDate">
+        </calendar-with-time>
+        <div class="flex flex-col">
+            <button class="btn btn-sm btn-primary w-1/12 mx-auto" @click="store">Mentés</button>
+            <div class="text-sm text-center text-red-700 p-2"> {{ errors }}</div>
         </div>
-    </div>
+
+        <div>
+            <label class="flex justify-center text-2xl font-bold mt-5">Foglalásaim</label>
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-1/2 mx-auto">
+                    <thead>
+                    <tr>
+                        <th class="w-1/12"></th>
+                        <th class="w-4/12">Dátum</th>
+                        <th class="w-4/12">Idő</th>
+                        <th class="w-2/12"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(booking, index) in ownBookings" :key="index">
+                        <BookingRow
+                            @deletedBooking="deleteBooking"
+                            @updatedBooking="updateBooking"
+                            :booking="booking"
+                            :index="index"
+                        ></BookingRow>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script>
 import CalendarWithTime from "@/Pages/Reservation/CalendarWithTime.vue";
 import axios from "axios";
 import BookingRow from "@/Components/Booking/BookingRow.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 export default {
     name: "Create",
-    components: {BookingRow, CalendarWithTime},
+    components: {AuthenticatedLayout, BookingRow, CalendarWithTime},
 
     data() {
         return {

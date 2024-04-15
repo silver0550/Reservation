@@ -76,7 +76,12 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-between mt-4">
+                <Link
+                    :href="route('register')"
+                    class=" mr-5 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                >Register
+                </Link>
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
@@ -88,6 +93,7 @@ const submit = () => {
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </PrimaryButton>
+
             </div>
         </form>
     </GuestLayout>

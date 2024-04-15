@@ -1,4 +1,5 @@
 <template>
+    <label class="flex justify-center text-2xl font-bold mt-5">Naptár</label>
     <div>
         <calendar-with-time
             :is-active="false">
