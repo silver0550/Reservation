@@ -59,6 +59,9 @@ export default {
                 let time = this.selectedTime.split(':');
                 this.selectedDay.setHours(parseInt(time[0]), parseInt(time[1]), 0);
             }
+            window.Echo.leave();
+            window.Echo.channel(`booking-update-${this.selectedDay.getMonth() + 1}`)
+                .listen('BookingUpdateEvent', this.handleBookingUpdateEvent)
 
             this.$emit('changeDate', new Date(this.selectedDay));
 
@@ -103,7 +106,6 @@ export default {
     mounted() {
         this.selectedDay = new Date();
         this.updateBookedTimes(this.selectedDay.getFullYear(), this.selectedDay.getMonth() + 1);
-
         window.Echo.channel(`booking-update-${this.selectedDay.getMonth() + 1}`)
             .listen('BookingUpdateEvent', this.handleBookingUpdateEvent)
     },

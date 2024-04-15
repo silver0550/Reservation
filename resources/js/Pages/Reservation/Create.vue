@@ -1,5 +1,5 @@
 <template>
-    <div class="card w-96 bg-neutral text-neutral-content mx-auto mt-5">
+    <div class="card w-96 bg-gray-200 mx-auto mt-5">
         <div class="card-body items-center text-center">
             <h2 class="card-title">Véglegesítés!</h2>
             <p>Az ön időpontja: {{ booking['date'] }} {{ booking['time'] }} óra</p>
